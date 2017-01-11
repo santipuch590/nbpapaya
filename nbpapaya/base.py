@@ -17,7 +17,6 @@ class ViewerBase(object):
                    </iframe>"""%(self._host, self._port, self.objid, self.width, self.height)
 
     def _do_checks(self):
-        print "doing checks", self.home_dir
         if not os.path.exists(self.home_dir):
             os.makedirs(self.home_dir)
         if not os.path.exists(os.path.join(self.home_dir,"papaya.js")):
@@ -147,12 +146,12 @@ class Brain(ViewerBase):
         </body>
     </html> 
             """
-            html = html.format(images=json(self.file_names.keys()),
+            html = html.format(images=json(list(self.file_names.keys())),
                                options=opt_json,
                                image_options=imgopt_json)
 
             file = NamedTemporaryFile(suffix=".html", dir="papaya_data")
-            file.write(html)
+            file.write(html.encode('utf-8'))
             # Do not close because it'll delete the file
             file.flush()
             self._html_file = file
@@ -329,7 +328,7 @@ class Surface(ViewerBase):
   
         """
         
-        html = html.format(images=json(self.file_names.keys()))
+        html = html.format(images=json(list(self.file_names.keys())))
         file = NamedTemporaryFile(suffix=".html", dir="papaya_data")
         file.write(html)
         # Do not close because it'll delete the file
@@ -344,7 +343,7 @@ class Overlay(ViewerBase):
     def __init__(self, image_options, port=8888, num=None, options=None, 
                         width=600, height=450, host="localhost"):
                             
-        fnames = image_options.keys()
+        fnames = list(image_options.keys())
                            
         super(Overlay, self).__init__(fnames, port, num, options, image_options,
                  width, height, host)
